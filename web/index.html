@@ -1,113 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <style>
-        @font-face {
-            font-family: 'Rubik';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url(./fonts/rubik-regular.woff2) format('woff2'),
-                 url(./fonts/rubik-regular.woff) format('woff');
-        }
-
-        body {
-            font-family: Rubik, Arial, sans-serif;
-            background-color: #E6E2DD;
-        }
-        
-        header {
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: flex-start;
-            align-items: center;
-            border-bottom: 1px solid black;
-        }
-
-        
-        
-        .menu {
-            flex-grow: 1;
-        }
-        
-        .menu ul {
-            display: flex;
-            flex-flow: row nowrap;
-            margin: 2px 0 0;
-            padding: 0;
-            font-size: 16px;
-            line-height: 18px;
-            list-style: none;
-        }   
-
-        .menu li {
-            margin-right: 20px;
-        }
-
-        .menu li:last-child {
-            margin-right: 0;
-        }
-
-        .menu a {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .menu a,
-        .menu .active {  
-            display: block;
-            padding: 8px 10px;
-            text-transform: uppercase;
-            letter-spacing: .27em;
-        }
-
-        .menu .active {
-            color: #fff;
-            background-color: #ff3d00;
-            border-radius: 8px;
-        }
-
-        .logo {
-        margin-right: 30px;
-        }
-
-        .tel {
-            font-size: 20px;
-            line-height: 24px;
-        }
-
-        .tel a {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .wrapper {
-            max-width: 1200px;
-            min-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 30px;
-        }
-
-        .splash {
-            display: flex;
-            height: 490px;
-            align-items: flex-end;
-            margin-bottom: 30px;
-            color: #fff;
-            background: #cacaca url("files/index.jpg") no-repeat 50% 100% / cover;
-        }
-
-        article {
-            margin-bottom: 150px;
-        }
-
-        footer {
-            margin-bottom: 40px;
-        }
-
-    </style>
     <head>
-        <title>Заголовок</title>
+        <title>Неофициальный сайт ТАГАЗ</title>
+        <link rel="stylesheet" href="./css/styles.css" />
     </head>
     <body>
         <header class="wrapper">
@@ -118,9 +13,9 @@
             </div>
             <div class="menu">
                 <ul>
-                    <li><a href="/products">Модельный ряд</a></li>
-                    <li><a href="/parts">Запчасти</a></li>
-                    <li><a href="/contacts">Контакты</a></li>
+                    <li><a href="./products.html">Модельный ряд</a></li>
+                    <li><a href="./parts.html">Запчасти</a></li>
+                    <li><a href="./contacts.html">Контакты</a></li>
                 </ul>
             </div>
             <div class="tel">
@@ -131,7 +26,33 @@
             <h1>Обрети свободу: импортзамещайся</h1>
         </div>
         <article class="wrapper">
-            ...
+            <p>
+                ТагАЗ - это автосборочное предприятие, расположенное в городе Таганроге (Россия, Ростовская область).
+                Аффилированное предприятие ОАО "Таганрогский комбайновый завод".
+            </p>
+            <p>
+                Завод производил автомобили, как собственной разработки, так и по лицензии Hyundai, 
+                SsangYong, Daewoo, Chery, JAC, BYD.
+            </p>
+            <p>
+                В начале 2014 года арбитраж признал предприятие банкротом.
+                В числе его кредиторов - Сбербанк (4,3 млрд руб.), Газпромбанк (3 млрд руб.), ВТБ (7,3 млрд руб.), а также Росбанк (1,6 млрд руб.), Абсолют-банк (1,1 млрд руб.).
+            </p>
+            <p>
+                В июле 2022 года стало известно о продаже Таганрогского автомобильного завода Ростсельмашу.
+                Последний также заключил с правительством Ростовской области соглашение постройке на площадях
+                бывшего автозавода предприятия по выпуску сельскохозяйственной и коммунальной техники с объемом инвестиций в 1,5 млрд рублей.
+            </p>
+            <p>
+                Ожидается, что на первом этапе на заводе будут работать 500 человек, а после его выхода на полную мощность - 1500 сотрудников.
+                На предприятии планируется выпускать сельхозтехнику на сумму 3 млрд рублей в год с перспективой ежегодного увеличения производства на 10–15%.
+                Помимо сборочного цеха будет создано литейное производство и испытательный полигон. На завод планируется вернуть бывших сотрудников предприятия ТагАЗ.
+                В 2025 году планируется выйти на производственную мощность в 5 тыс. единиц сельхозтехники.
+            </p>
+            <p>
+                В планах — выпуск пяти видов сельскохозяйственных машин: почвообрабатывающей, кормоуборочной, зерноперерабатывающей, самоходных и прицепных опрыскивателей,
+                а также адаптеров для комбайнов.
+            </p>
         </article>
         <footer class="wrapper">
             <p>2024, ТАГАЗ</p>
