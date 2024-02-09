@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        @font-face {
+            font-family: 'Rubik';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(./fonts/rubik-regular.woff2) format('woff2'),
+                 url(./fonts/rubik-regular.woff) format('woff');
+        }
+
+        body {
+            font-family: Rubik, Arial, sans-serif;
+            background-color: #E6E2DD;
+        }
+        
+        header {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+            align-items: center;
+            border-bottom: 1px solid black;
+        }
+
+        
+        
+        .menu {
+            flex-grow: 1;
+        }
+        
+        .menu ul {
+            display: flex;
+            flex-flow: row nowrap;
+            margin: 2px 0 0;
+            padding: 0;
+            font-size: 16px;
+            line-height: 18px;
+            list-style: none;
+        }   
+
+        .menu li {
+            margin-right: 20px;
+        }
+
+        .menu li:last-child {
+            margin-right: 0;
+        }
+
+        .menu a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .menu a,
+        .menu .active {  
+            display: block;
+            padding: 8px 10px;
+            text-transform: uppercase;
+            letter-spacing: .27em;
+        }
+
+        .menu .active {
+            color: #fff;
+            background-color: #ff3d00;
+            border-radius: 8px;
+        }
+
+        .logo {
+        margin-right: 30px;
+        }
+
+        .tel {
+            font-size: 20px;
+            line-height: 24px;
+        }
+
+        .tel a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .wrapper {
+            max-width: 1200px;
+            min-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 30px;
+        }
+
+        .splash {
+            display: flex;
+            height: 490px;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            color: #fff;
+            background: #cacaca url("files/index.jpg") no-repeat 50% 100% / cover;
+        }
+
+        article {
+            margin-bottom: 150px;
+        }
+
+        footer {
+            margin-bottom: 40px;
+        }
+
+    </style>
+    <head>
+        <title>Заголовок</title>
+    </head>
+    <body>
+        <header class="wrapper">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="files/logo.png" width="60" height="60px" />
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="/products">Модельный ряд</a></li>
+                    <li><a href="/parts">Запчасти</a></li>
+                    <li><a href="/contacts">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="tel">
+                <a href="tel:84912921912">8 (4912) 92 19 12</a> 
+            </div>
+        </header>
+        <div class="splash wrapper">
+            <h1>Обрети свободу: импортзамещайся</h1>
+        </div>
+        <article class="wrapper">
+            ...
+        </article>
+        <footer class="wrapper">
+            <p>2024, ТАГАЗ</p>
+        </footer>
+    </body>
+</html>
