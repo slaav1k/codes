@@ -51,19 +51,19 @@
                   <th>Рознечная цена</th>
                 </tr>
                 <tr>
-                  <td><img src="https://avatars.mds.yandex.net/get-mpic/5233990/img_id8424788737660766238.jpeg/optimize" width="100" height="100"></td>
+                  <td><img src="https://avatars.mds.yandex.net/get-mpic/5233990/img_id8424788737660766238.jpeg/optimize" width="100" height="100" id="image1"></td>
                   <td>Трос ручного тормоза</td>
                   <td>101425671436</td>
                   <td>2499 руб.</td>
                 </tr>
                 <tr>
-                  <td><img src="https://avatars.mds.yandex.net/get-mpic/5315102/img_id3279402968676614961.jpeg/600x800"width="100" height="100"></td>
+                  <td><img src="https://avatars.mds.yandex.net/get-mpic/5315102/img_id3279402968676614961.jpeg/600x800"width="100" height="100" id="image2"></td>
                   <td>Колодки тормозные передние</td>
                   <td>101785743328</td>
                   <td>3199 руб.</td>
                 </tr>
                 <tr>
-                    <td><img src="https://avatars.mds.yandex.net/get-marketpic/9123519/pic26427f64b87168c84e39dd9b1edf3e6d/600x800"width="100" height="100"></td>
+                    <td><img src="https://avatars.mds.yandex.net/get-marketpic/9123519/pic26427f64b87168c84e39dd9b1edf3e6d/600x800"width="100" height="100" id="image3"></td>
                     <td>Диски торомзные задние, комплект</td>
                     <td>102123542676</td>
                     <td>6399 руб.</td>
@@ -75,4 +75,24 @@
             <p>2024, ТАГАЗ</p>
         </footer>
     </body>
+
+    <script>
+        var image = document.getElementById('image1');
+        var image2 = document.getElementById('image2');
+        var image3 = document.getElementById('image3');
+    
+
+        image.addEventListener('click', function() {
+            alert('Это трос ручного тормоза!');
+        });
+
+        image2.addEventListener('click', function() {
+            alert('Это передние колодки!');
+        });
+
+        image3.addEventListener('click', function() {
+            alert('Это задние диски!');
+        });
+    </script>
+
 </html>
