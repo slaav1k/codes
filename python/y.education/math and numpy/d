@@ -1,0 +1,4 @@
+import math
+
+ls = list(map(int, input().split()))
+print(math.prod(ls) ** (1 / len(ls)))
