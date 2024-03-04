@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>Лаба4</title>
+
+<style>
+
+input {
+	margin-top: 10px;
+}
+
+form, div {
+	margin-top: 20px;
+}
+	
+table{
+	border-spacing: 0px;
+}
+
+</style>
+
+<script>
+
+/*
+Создайте таблицу с помощью модификации DOM, предусмотрев изменения её размеров и обновления значения цвета ячеек.
+
+Размер 5x5:
+12345
+ 1234
+  123
+   12
+    1
+
+*/
+
+function isNumeric(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function createTable(size)
+{
+	var rez = document.getElementById("result");
+	
+	document.getElementById("update").hidden = true;
+
+	if (!isNumeric(size))
+	{
+		rez.innerHTML = "<b>Ошибка!</b> Проверьте введёное значение<br>";
+		return;
+	}
+
+	size = parseFloat(size);
+
+	if (size < 1 || size > 50)
+	{
+		rez.innerHTML = "<b>Ошибка!</b> C такими размерами нельзя построить фигуру<br>";
+		return;
+	}
+	
+	rez.innerHTML = "";
+	document.getElementById("update").hidden = false;
+
+	// создаём элементы table и tbody (по стандарту ячейки таблицы должны быть в теге tbody)
+	var table = document.createElement("table");
+	var tbody = document.createElement("tbody");
+	table.appendChild(tbody);
+	
+	var x, y;
+	var isColor; //заполняется ли ячейка числом
+	for (y = 0; y < size; y++)
+	{
+		// создаём строку таблицы
+		let row = document.createElement("tr");
+		
+		for (x = 0; x < size; x++)
+		{
+			isColor = x <= y;
+			
+			// создаём ячейку с нужными аттрибутами
+			let cell = document.createElement("td");
+			let cellText;
+			if (isColor && (x == 0 || x == y) && y != size - 1)
+			{
+				cellText = document.createTextNode(y + 1);
+			}
+			else if (isColor && (y == size - 1))
+			{
+				cellText = document.createTextNode(y + 1);
+			}
+			else
+			{
+				cellText = document.createTextNode("");
+			}
+			// let cellText = document.createTextNode((isRed && (x == 0 || x == y)) ? y + 1: "");
+			cell.width = "15px";
+			cell.align = "center";
+
+			if (y % 2 == 0 && isColor){
+				cell.bgColor = "red";
+			}
+			else if (y % 2 != 0 && isColor)
+			{
+				cell.bgColor = "lightblue";
+			}
+			else
+			{
+				cell.bgColor = "transparent";
+			}
+			
+			
+			cell.appendChild(cellText);
+			row.appendChild(cell);
+		}
+		tbody.appendChild(row);
+	}
+	rez.appendChild(table);
+}
+
+
+function updateTable(color)
+{
+	// находим все ячейки в блоке результатов
+	var cells = document.getElementById("result").getElementsByTagName("td");
+	
+	for (var i = 0; i < cells.length; ++i) 
+		if(cells[i].bgColor != "transparent")
+			cells[i].bgColor = color;
+}
+
+function zerkaloStroki() {
+    var table = document.getElementById("result");
+    var rows = table.getElementsByTagName("tr");
+    var parent = table.getElementsByTagName("tbody")[0];
+    var k = 0;
+    // Перебираем строки таблицы и перемещаем их в обратном порядке
+    for (var i = rows.length - 1; i >= 0; i--) {
+        parent.insertBefore(rows[rows.length - 1], rows[k++]); // Вставляем текущую строку перед первой строкой
+    }
+}
+
+function zamenaChisel(f)
+{
+	var table = document.getElementById("result");
+    var rows = table.getElementsByTagName("tr");
+    var rowSumm = 0;
+	var tableSumm = 0;
+	var count = 0;
+    for (var i = 0; i < rows.length; i++) {
+        rowSumm = 0;
+        var cols = rows[i].getElementsByTagName("td");
+        for (var j = 0; j < cols.length; j++) {
+			if (isNumeric(cols[j].textContent))
+            	rowSumm += parseFloat(cols[j].textContent); 
+				count += 1;           
+        }
+		tableSumm += rowSumm;
+        // alert('Сумма в строке ' + (i+1) + ': ' + rowSumm);
+    }
+	if (f == "sum")
+	{
+		for (var i = 0; i < rows.length; i++) {
+			var cols = rows[i].getElementsByTagName("td");
+			for (var j = 0; j < cols.length; j++) {
+				if (isNumeric(cols[j].textContent) && cols[j].bgColor == "lightblue")
+					cols[j].textContent = tableSumm;
+			}
+    	}
+	}
+	else
+	{
+		for (var i = 0; i < rows.length; i++) {
+			var cols = rows[i].getElementsByTagName("td");
+			for (var j = 0; j < cols.length; j++) {
+				if (isNumeric(cols[j].textContent) && cols[j].bgColor == "lightblue")
+					cols[j].textContent = (tableSumm / count).toFixed(1);;
+			}
+    	}
+	}
+}
+
+function deleteWhereSumLessNeed(num) {
+    if (!isNumeric(num)) {
+        alert("Ошибка! Проверьте введёное значение");
+        return;
+    }
+
+    num = parseFloat(num);
+
+    if (num < 1) {
+        alert("Ошибка! Проверьте введёное значение");
+        return;
+    }
+
+    var table = document.getElementById("result");
+    var rows = table.getElementsByTagName("tr");
+    var rowSumm = 0;
+	var count;
+	var indexes = [];
+    for (var i = 0; i < rows.length; i++) {
+        rowSumm = 0;
+        var cols = rows[i].getElementsByTagName("td");
+        for (var j = 0; j < cols.length; j++) {
+			if (isNumeric(cols[j].textContent))
+            	rowSumm += parseFloat(cols[j].textContent);            
+        }
+		if (rowSumm < num)
+			indexes.push(i);
+        // alert('Сумма в строке ' + (i+1) + ': ' + rowSumm);
+    }
+
+	var newTable = document.createElement("table");
+    var tbody = document.createElement("tbody");
+
+    for (var i = 0; i < rows.length; i++) {
+        if (!indexes.includes(i)) {
+            var cloneRow = rows[i].cloneNode(true); // Клонируем строку
+            tbody.appendChild(cloneRow); // Добавляем клонированную строку в новую таблицу
+        }
+    }
+	var rez = document.getElementById("result");
+	rez.innerHTML = "";
+	table = newTable;
+	rez.appendChild(table);
+    newTable.appendChild(tbody);
+
+    // // Заменяем старую таблицу новой
+    // var parent = table.parentNode;
+    // parent.replaceChild(newTable, table);
+}
+
+
+function init()
+{
+	
+	var rez = document.createElement("div");
+	rez.id = "result";
+	document.body.appendChild(rez);
+	
+	document.getElementById("update").hidden = true;
+}
+
+</script>
+</head>
+<body onload = "init()" >
+	<form>
+	Введите размер фигуры (не более 50х50):<br>
+	<input type="text" id="size"><br>
+	<input type="button" id="button" value="Построить" 
+					onclick="createTable(form.size.value)">
+	</form>
+	<form id = "update">
+	Действия:<br>
+	1. Удалить все строки таблицы,
+	в которых сумма чисел меньше заданной пользователем.<br>
+	<input type="text" id="num"><br>
+	<input type="button" id="buttonDo1" value="Выполнить" 
+					onclick="deleteWhereSumLessNeed(form.num.value)"><br>
+	2. Найти на выбор сумму или среднее арифметическое всех чисел и заполнить
+	данным значением только голубые ячейки, где есть числа.<br>
+	<input type="radio" name="zamena" value="sum">Сумма 
+	<input type="radio" name="zamena" value="sred">Среднее арифметическое<br>
+	<input type="button" id="buttonDo2" value="Выполнить" 
+					onclick="zamenaChisel(form.zamena.value)"><br>
+	3. Отразить строки таблицы зеркально по вертикали.<br>
+	<input type="button" id="buttonDo3" value="Выполнить" 
+					onclick="zerkaloStroki()">
+	</form>
+</body>
+</html>
