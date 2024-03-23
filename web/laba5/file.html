@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>Лаба5</title>
+
+<style>
+
+input {
+	margin-top: 10px;
+}
+
+form, div {
+	margin-top: 20px;
+}
+	
+table{
+	border-spacing: 0px;
+}
+
+</style>
+
+<script>
+
+/*
+Создайте таблицу с помощью модификации DOM, предусмотрев изменения её размеров и обновления значения цвета ячеек.
+
+Размер 5x5:
+12345
+ 1234
+  123
+   12
+    1
+
+*/
+
+function isNumeric(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+
+function averageOfVector(L) {
+    ans = L.reduce((acc, val) => acc + val, 0) / L.length;
+    ans = parseFloat(ans);
+    return ans.toFixed(2);
+}
+
+function createArrays(sizeM1, sizeM2, randA, randB)
+{          
+    sizeM1 = parseFloat(sizeM1);
+    sizeM2 = parseFloat(sizeM2);
+    randA = parseFloat(randA);
+    randB = parseFloat(randB);
+    var rez = document.getElementById("result");
+	
+	document.getElementById("update").hidden = true;
+    
+    rez.innerHTML = "";
+	document.getElementById("update").hidden = false;
+
+    const getRandomNumber = () => Math.random() * (randB - randA + 1) + randA;
+
+    // Создаем первую матрицу размером sizeM1 на sizeM1
+    const matrix1 = Array.from({ length: sizeM1 }, () =>
+        Array.from({ length: sizeM1 }, getRandomNumber)
+    );
+
+    // Создаем вторую матрицу размером sizeM2 на sizeM2
+    const matrix2 = Array.from({ length: sizeM2 }, () =>
+        Array.from({ length: sizeM2 }, getRandomNumber)
+    );
+
+    console.log("Первая матрица:");
+    console.log(matrix1);
+    console.log("Вторая матрица:");
+    console.log(matrix2);
+    var table1 = createTableFromMatrix(matrix1);
+    var table2 = createTableFromMatrix(matrix2);
+    var tM1 = document.createTextNode("M1");
+    rez.appendChild(tM1);
+    rez.appendChild(table1);
+    var tM2 = document.createTextNode("M2");
+    rez.appendChild(tM2);
+    rez.appendChild(table2);
+
+    var V1 = matrix1.map(row => averageOfVector(row));
+    var V2 = matrix2.map(row => averageOfVector(row));
+    console.log("Вектор V1:", V1);
+    console.log("Вектор V2:", V2);
+    var vector1 = createTableFromVector(V1);
+    var vector2 = createTableFromVector(V2);
+    var tV1 = document.createTextNode("V1");
+    rez.appendChild(tV1);
+    rez.appendChild(vector1);
+    var tV2 = document.createTextNode("V2");
+    rez.appendChild(tV2);
+    rez.appendChild(vector2);
+
+    V1.sort((a, b) => a - b);
+    vector1 = createTableFromVector(V1);
+    var tV1sort = document.createTextNode("V1 sort");
+    rez.appendChild(tV1sort);
+    rez.appendChild(vector1);
+
+    V2.sort((a, b) => b - a);
+    vector2 = createTableFromVector(V2);
+    var tV2sort = document.createTextNode("V2 anti sort");
+    rez.appendChild(tV2sort);
+    rez.appendChild(vector2);
+
+    const isIntegerEven = number => {
+        return Math.floor(number) % 2 === 0;
+    };
+
+    // Удаление элементов с чётной целой частью
+    V1 = V1.filter(element => !isIntegerEven(element));
+    vector1 = createTableFromVector(V1);
+    var tV1mod = document.createTextNode("V1 с удалением элементов, где целая часть четная");
+    rez.appendChild(tV1mod);
+    rez.appendChild(vector1);
+
+
+    V2 = V2.filter(element => isIntegerEven(element));
+    vector2 = createTableFromVector(V2);
+    var tV2mod = document.createTextNode("V2 с удалением элементов, где целая часть нечетная");
+    rez.appendChild(tV2mod);
+    rez.appendChild(vector2);
+    // document.body.appendChild(table1);
+    // document.body.appendChild(table2);
+}
+
+function createTableFromVector(matrix) {
+    // Создаем элементы table и tbody
+    var table = document.createElement("table");
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    var row = document.createElement("tr");
+    // Проходим по строкам матрицы
+    for (var i = 0; i < matrix.length; i++) {
+        var cell = document.createElement("td");
+        // Заполняем ячейку значением из матрицы
+        var roundedValue = parseFloat(matrix[i]).toFixed(2);
+        var cellText = document.createTextNode(roundedValue);
+        cell.width = "15px";
+        cell.align = "center";
+        cell.style.border = "1px solid black";
+        cell.style.padding = "5px";
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+        
+        
+    }
+    tbody.appendChild(row);
+
+    table.style.borderCollapse = "collapse"; // Объединяем рамки ячеек
+    table.style.border = "2px solid black"; 
+
+    return table;
+}
+
+function createTableFromMatrix(matrix) {
+    // Создаем элементы table и tbody
+    var table = document.createElement("table");
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
+    // Проходим по строкам матрицы
+    for (var i = 0; i < matrix.length; i++) {
+        // Создаем строку таблицы
+        var row = document.createElement("tr");
+        
+        // Проходим по элементам строки матрицы
+        for (var j = 0; j < matrix[i].length; j++) {
+            // Создаем ячейку таблицы
+            var cell = document.createElement("td");
+            // Заполняем ячейку значением из матрицы
+            var roundedValue = parseFloat(matrix[i][j]).toFixed(2);
+            var cellText = document.createTextNode(roundedValue);
+            cell.width = "15px";
+			cell.align = "center";
+            cell.style.border = "1px solid black";
+            cell.style.padding = "5px";
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+    }
+
+
+    table.style.borderCollapse = "collapse"; // Объединяем рамки ячеек
+    table.style.border = "2px solid black"; 
+
+    return table;
+}
+
+function createTable(size)
+{
+	var rez = document.getElementById("result");
+	
+	document.getElementById("update").hidden = true;
+
+	if (!isNumeric(size))
+	{
+		rez.innerHTML = "<b>Ошибка!</b> Проверьте введёное значение<br>";
+		return;
+	}
+
+	size = parseFloat(size);
+
+	if (size < 1 || size > 50)
+	{
+		rez.innerHTML = "<b>Ошибка!</b> C такими размерами нельзя построить фигуру<br>";
+		return;
+	}
+	
+	rez.innerHTML = "";
+	document.getElementById("update").hidden = false;
+
+	// создаём элементы table и tbody (по стандарту ячейки таблицы должны быть в теге tbody)
+	var table = document.createElement("table");
+	var tbody = document.createElement("tbody");
+	table.appendChild(tbody);
+	
+	var x, y;
+	var isColor; //заполняется ли ячейка числом
+	for (y = 0; y < size; y++)
+	{
+		// создаём строку таблицы
+		let row = document.createElement("tr");
+		
+		for (x = 0; x < size; x++)
+		{
+			
+			let cell = document.createElement("td");
+			let cellText;
+			cellText = document.createTextNode(y + 1);
+			cell.width = "15px";
+			cell.align = "center";
+			cell.appendChild(cellText);
+			row.appendChild(cell);
+		}
+		tbody.appendChild(row);
+	}
+	rez.appendChild(table);
+}
+
+
+function generateMatrixHTML(matrix, title) {
+            let html = `<h3>${title}</h3>`;
+            html += "<table border='1'>";
+                html += "<tr>";
+            matrix.forEach(row => {
+                
+                row.forEach(cell => {
+                    html += `<td>${cell}</td>`;
+                });
+                html += "</tr>";
+            });
+            html += "</table>";
+            return html;
+        }
+
+
+function init()
+{
+	
+	var rez = document.createElement("div");
+	rez.id = "result";
+	document.body.appendChild(rez);
+	
+	document.getElementById("update").hidden = true;
+}
+
+</script>
+</head>
+<body onload = "init()" >
+	<form>
+	Введите размер массива M1 (не более 50х50):<br>
+	<input type="text" id="sizeM1"><br>
+    Введите размер массива M2 (не более 50х50):<br>
+	<input type="text" id="sizeM2"><br>
+    Введите дипозон генерации элементов чисел в массивах:<br>
+    От:<br>
+    <input type="text" id="randA"><br>
+    До:<br>
+    <input type="text" id="randB"><br>
+	<input type="button" id="button" value="Сгенерировать" 
+					onclick="createArrays(form.sizeM1.value, form.sizeM2.value, form.randA.value, form.randB.value)">
+	</form>
+	<form id = "update">
+
+	</form>
+</body>
+</html>
