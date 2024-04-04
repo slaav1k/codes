@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<script>
+
+function generateBook(title, genre, publicationDate, author, copies, numPages) {
+    return {
+        title: title,
+        genre: genre,
+        publicationDate: publicationDate,
+        author: author,
+        copies: copies,
+        numPages: numPages
+    };
+}
+
+function generateAuthor(firstName, surName) {
+    return {
+        firstName: firstName,
+        surName: surName
+    };
+}
+
+function generateDate(day, month, year)
+{
+    return {
+        day : day,
+        month : month,
+        year : year
+    };
+}
+
+function generateBooks(numBooks) {
+    const books = [];
+    const genres = ["Fiction", "Non-fiction", "Mystery", "Science Fiction", "Fantasy", "Biography"];
+    const firstNames = ["John", "Jane", "Michael", "Emily", "David", "Sarah", "James", "Emma", "Robert", "Olivia"];
+    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Wilson", "Martinez"];
+    const authors = [{firstName: "John", surName: "Doe"}, {firstName: "Jane", surName: "Smith"}, {firstName: "Mark", surName: "Johnson"}];
+
+    for (let i = 0; i < numBooks; i++) {
+        const title = "Book " + i;
+        const genre = genres[Math.floor(Math.random() * genres.length)];
+        const publicationDate = new Date(1970 + Math.floor(Math.random() * 54), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+        const author = authors[Math.floor(Math.random() * authors.length)];
+        const copies = Math.floor(Math.random() * 100) + 1;
+        const numPages = Math.floor(Math.random() * 951) + 50; // Random number between 50 and 1000
+
+        const book = generateBook(title, genre, publicationDate, author, copies, numPages);
+        books.push(book);
+    }
+
+    return books;
+}
+
+function filterBooksByAuthor(books, authorLastName) {
+    return books.filter(book => book.author.surName === authorLastName);
+}
+
+function filterBooksByGenre(books, genre) {
+    return books.filter(book => book.genre === genre);
+}
+
+function filterBooksByDateRange(books, startDate, endDate) {
+    return books.filter(book => book.publicationDate >= startDate && book.publicationDate <= endDate);
+}
+
+
+
+
+
+// Example usage:
+const numBooks = 50;
+const books = generateBooks(numBooks);
+console.log("All books:", books);
+
+const authorBooks = filterBooksByAuthor(books, "Doe");
+console.log("Books by author Doe:", authorBooks);
+
+const genreBooks = filterBooksByGenre(books, "Mystery");
+console.log("Mystery genre books:", genreBooks);
+
+const startDate = new Date(2000, 0, 1); // Начальная дата (1 января 2000 года)
+const endDate = new Date(2010, 11, 31); // Конечная дата (31 декабря 2010 года)
+
+const booksInRange = filterBooksByDateRange(books, startDate, endDate);
+console.log("Books published between 2000 and 2010:", booksInRange);
+		
+</script>
+</head>
+<body>
+</body>
+</html>
+
