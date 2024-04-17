@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>Лаба7</title>
+
+<style>
+
+.filter {
+    display: inline-block;
+    vertical-align: top; 
+    margin-right: 20px; 
+}
+
+
+.action-div {
+    display: inline-block;
+    vertical-align: top; 
+    margin-right: 20px;
+}
+
+
+input {
+	margin-top: 10px;
+}
+
+form, div {
+	margin-top: 20px;
+}
+	
+/* table{
+	border-spacing: 0px;
+} */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.title-column {
+    width: 20%;
+}
+
+.genre-column {
+    width: 15%;
+}
+
+.publicationDate-column {
+    width: 20%;
+}
+
+.author-column {
+    width: 20%;
+}
+
+.copies-column {
+    width: 10%;
+}
+
+.numPages-column {
+    width: 15%;
+}
+
+</style>
+
+<script>
+
+
+function isNumeric(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+
+var books = [];
+
+function generateBooks(size, randA, randB, randACount, randBCount) {
+    size = parseInt(size);
+    randA = parseInt(randA);
+    randB = parseInt(randB);
+    randACount = parseInt(randACount);
+    randBCount = parseInt(randBCount);
+
+ 
+    console.log("All books:", books);
+    displayBooks(books);
+    document.getElementById("update").hidden = false;
+}
+
+function f1(x) {
+    return x + ((Math.pow(x, 3) - Math.log(x)) / Math.sqrt(x + 5));
+}
+
+function f2(x) {
+    return Math.pow(Math.sin(x), 2) - Math.abs(5 - Math.log(x - 4));
+}
+
+function f3(x) {
+    return Math.pow(Math.E, x - 2) + (Math.pow(x, 3) + 2 * x) / 4;
+}
+
+function checkFunc(tA, tB, tH, tFunc) {
+    tA = parseFloat(tA);
+    tB = parseFloat(tB);
+    tH = parseFloat(tH);
+
+    const selectedFunc = (x) => {
+        switch (tFunc) {
+            case 'f1':
+                return f1(x);
+            case 'f2':
+                return f2(x);
+            case 'f3':
+                return f3(x);
+          default:
+            return 0;
+        }
+      };
+
+    let xValues = [];
+    let yValues = [];
+
+    for (let x = tA; x <= tB; x += tH) {
+        xValues.push(x);
+        yValues.push(selectedFunc(x));
+    }
+
+
+    const min = Math.min(...yValues);
+
+    const positiveCount = yValues.filter(y => y > 0).length;
+
+    let isIncreasing = true;
+    for (let i = 1; i < yValues.length; i++) {
+        if (yValues[i] <= yValues[i - 1]) {
+            isIncreasing = false;
+            break;
+        }
+    }
+
+    console.log(min, positiveCount, isIncreasing);
+}
+
+function displayBooks(books) {
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
+
+    var table = document.createElement("table");
+    var headerRow = table.insertRow();
+    headerRow.innerHTML = "<th>Title</th><th>Genre</th><th>Publication Date</th><th>Author</th><th>Copies</th><th>Number of Pages</th>"
+     + (hasAgeProperty(books) ? "<th>Age</th>" : ""); 
+
+    for (var i = 0; i < books.length; i++) {
+        var book = books[i];
+        var row = table.insertRow();
+        row.innerHTML = "<td>" + book.title + "</td><td>" + book.genre + "</td><td>" + (book.publicationDate ? book.publicationDate.toDateString() : "")
+             + "</td><td>" + book.author.firstName + " " + book.author.surName + "</td><td>" + book.copies + "</td><td>" + book.numPages + "</td>"
+              + (book.hasOwnProperty("age") ? "<td>" + book.age + "</td>" : ""); 
+    }
+
+    resultDiv.appendChild(table);
+}
+
+
+
+
+
+
+
+function displayBooksAsJSON() {
+    var json = JSON.stringify(books, null, 2); 
+    var resultDiv = document.getElementById("result");
+    resultDiv.textContent = json; 
+}
+
+function init()
+{
+	
+	var rez = document.createElement("div");
+	rez.id = "result";
+	document.body.appendChild(rez);
+	
+	document.getElementById("update").hidden = true;
+}
+
+</script>
+</head>
+<body onload = "init()" >
+	<form>
+    Введите дипозон:<br>
+    От:
+    <input type="text" id="tA">
+    До:
+    <input type="text" id="tB"><br>
+    Введите шаг:<br>
+    <input type="text" id="tH"><br>
+    Выберите функцию: <br>
+    <input type="radio" name="tFunc" value="f1">f1 
+    <input type="radio" name="tFunc" value="f2">f2 
+	<input type="radio" name="tFunc" value="f3">f3<br>
+	<input type="button" id="button" value="Сгенерировать" 
+					onclick="checkFunc(form.tA.value, form.tB.value, form.tH.value, form.tFunc.value)">
+	</form>
+
+	<form id = "update">
+        Действия:<br>
+
+        <div class="filter">
+            1. Фильтр книг по жанру:<br>
+            <input type="text" id="genre"><br>
+            <input type="button" value="Выполнить" onclick="filterBooksByGenre(form.genre.value)">
+        </div>
+    
+        <div class="filter">
+            2. Фильтр книг по фамилии автора:<br>
+            <input type="text" id="authorLastName"><br>
+            <input type="button" value="Выполнить" onclick="filterBooksByAuthor(form.authorLastName.value)">
+        </div>
+    
+        <div class="filter">
+            3. Фильтр книг по дате публикации:<br>
+            Начальная дата: <input type="date" id="startDate">
+            Конечная дата: <input type="date" id="endDate"><br>
+            <input type="button" value="Выполнить" onclick="filterBooksByDateRange(form.startDate.value, form.endDate.value)">
+        </div>
+    
+        <div class="filter">
+            4. Вывести список без фильтров:<br>
+            <input type="button" value="Выполнить" onclick="outputBooksOrigin()">
+        </div>
+
+        <div class="action-div">
+            5. Убрать информацию о количестве страниц, у тех книг, где количество страниц меньше заданного.<br>
+            <input type="text" id="pages"><br>
+            <input type="button" value="Выполнить" onclick="removeBooksByPageCount(form.pages.value)">
+        </div>
+        <div class="action-div">
+            6. Добавить информацию о возрасте книги.<br>
+            <input type="button" value="Выполнить" onclick="addAgeInformationToBooks()">
+        </div>
+        <div class="action-div">
+            7. Вывести JSON.<br>
+            <input type="button" value="Выполнить" onclick="displayBooksAsJSON()">
+        </div>
+	</form>
+</body>
+</html>

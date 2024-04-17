@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Function Characteristics Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #calculator {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 40%;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    label {
+      margin: 10px 0;
+      display: block;
+    }
+
+    input,
+    select,
+    button {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    select {
+      height: 34px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    #output {
+      margin-top: 20px;
+    }
+
+    canvas {
+      margin-top: 20px;
+      max-width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="calculator">
+    <h1>Function Characteristics Calculator</h1>
+    <label for="rangeStart">Start of Range:</label>
+    <input type="number" id="rangeStart" value="-10">
+
+    <label for="rangeEnd">End of Range:</label>
+    <input type="number" id="rangeEnd" value="10">
+
+    <label for="step">Step:</label>
+    <input type="number" id="step" value="1">
+
+    <label for="functionSelect">Select Function:</label>
+    <select id="functionSelect">
+      <option value="f1">Function 1</option>
+      <option value="f2">Function 2</option>
+      <option value="f3">Function 3</option>
+    </select>
+
+    <button onclick="calculateCharacteristics()">Calculate Characteristics</button>
+
+    <div id="output"></div>
+
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    let myChart;
+
+    function calculateCharacteristics() {
+      const rangeStart = parseFloat(document.getElementById('rangeStart').value);
+      const rangeEnd = parseFloat(document.getElementById('rangeEnd').value);
+      const step = parseFloat(document.getElementById('step').value);
+      const selectedFunction = document.getElementById('functionSelect').value;
+
+      const result = {
+        maxPoint: { x: null, y: -Infinity },
+        discontinuityPoints: [],
+        positiveValueCount: 0,
+      };
+
+      const labels = [];
+      const data = [];
+
+      const selectedFunctionImpl = (x) => {
+        switch (selectedFunction) {
+          case 'f1':
+            return (Math.pow(Math.log(x - 5), 5) - Math.cos(x)) / (x - Math.sqrt(5 * Math.sin(x)));
+          case 'f2':
+            return Math.log(x - 5) - Math.pow(Math.log(x - 2), 3) + 1 / (x + 5 * Math.sin(x));
+          case 'f3':
+            return Math.sqrt((Math.pow(Math.E, 3) + x) / 6) + (Math.sin(x - 7)) / 4;
+          default:
+            return 0;
+        }
+      };
+
+      for (let x = rangeStart; x <= rangeEnd; x += step) {
+        const y = selectedFunctionImpl(x);
+
+        // Finding maximum point
+        if (y > result.maxPoint.y) {
+          result.maxPoint = { x, y };
+        }
+
+        // Counting positive values
+        if (y > 0) {
+          result.positiveValueCount++;
+        }
+
+        if (y == 0) {
+          result.discontinuityPoints.push(x);
+        }
+
+        labels.push(x);
+        data.push(y);
+      }
+
+      const outputDiv = document.getElementById('output');
+      outputDiv.innerHTML = JSON.stringify(result, null, 2);
+
+      if (myChart) {
+        myChart.destroy();
+      }
+
+      const ctx = document.getElementById('chart').getContext('2d');
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Function',
+            data: data,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            fill: false,
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom'
+            },
+            y: {
+              min: Math.min(...data),
+              max: Math.max(...data)
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
