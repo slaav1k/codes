@@ -71,8 +71,13 @@ th {
     width: 15%;
 }
 
-</style>
+canvas {
+    max-width: 400px; 
+    max-height: 400px;
+}
 
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
 
@@ -109,7 +114,59 @@ function f3(x) {
     return Math.pow(Math.E, x - 2) + (Math.pow(x, 3) + 2 * x) / 4;
 }
 
-function checkFunc(tA, tB, tH, tFunc) {
+function createChart(xValues, yValues) {
+    // Создаем элемент canvas
+    var canvas = document.createElement("canvas");
+    canvas.width = 40;
+    canvas.height = 40;
+
+    // Получаем элемент для вывода результата
+    var resultDiv = document.getElementById("result");
+
+
+    // Добавляем canvas внутрь элемента с id "result"
+    resultDiv.appendChild(canvas);
+
+    // Получаем контекст рисования на canvas
+    var ctx = canvas.getContext('2d');
+
+    // Рисуем график на canvas
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xValues,
+            datasets: [{
+                label: 'График функции',
+                data: yValues,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'X'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Y'
+                    }
+                }
+            }
+        }
+    });
+
+    canvas.style.width = '400px';
+    canvas.style.height = '400px';
+}
+
+
+function tabulateFunction(tA, tB, tH, tFunc) {
     tA = parseFloat(tA);
     tB = parseFloat(tB);
     tH = parseFloat(tH);
@@ -122,10 +179,10 @@ function checkFunc(tA, tB, tH, tFunc) {
                 return f2(x);
             case 'f3':
                 return f3(x);
-          default:
-            return 0;
+            default:
+                return 0;
         }
-      };
+    };
 
     let xValues = [];
     let yValues = [];
@@ -135,21 +192,186 @@ function checkFunc(tA, tB, tH, tFunc) {
         yValues.push(selectedFunc(x));
     }
 
+    return [xValues, yValues];
+}
 
-    const min = Math.min(...yValues);
+function checkFunc(tA, tB, tH, tFunc, tMin, tPositive, tMonotonic) {
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
 
-    const positiveCount = yValues.filter(y => y > 0).length;
+    let [xValues, yValues] = tabulateFunction(tA, tB, tH, tFunc);
+    
 
-    let isIncreasing = true;
-    for (let i = 1; i < yValues.length; i++) {
-        if (yValues[i] <= yValues[i - 1]) {
-            isIncreasing = false;
-            break;
+    tA = parseFloat(tA);
+    tB = parseFloat(tB);
+    tH = parseFloat(tH);
+
+    const selectedFunc = (x) => {
+        switch (tFunc) {
+            case 'f1':
+                return f1(x);
+            case 'f2':
+                return f2(x);
+            case 'f3':
+                return f3(x);
+            default:
+                return 0;
         }
+    };
+
+    let min = undefined;
+    let positiveCount = undefined;
+    let isMonotonic = undefined;
+
+    const tMinCheckbox = document.getElementById("tMin");
+    if (tMinCheckbox.checked) {
+        min = Math.min(...yValues);
+    }
+    
+    const tPositiveCheckbox = document.getElementById("tPositive");
+    if (tPositiveCheckbox.checked) {
+        positiveCount = yValues.filter(y => y > 0).length;
     }
 
-    console.log(min, positiveCount, isIncreasing);
+    const tMonotonicCheckbox = document.getElementById("tMonotonic");
+    if (tMonotonicCheckbox.checked) {
+        let isIncreasing = true;
+        for (let i = 1; i < yValues.length; i++) {
+            if (yValues[i] <= yValues[i - 1]) {
+                isIncreasing = false;
+                break;
+            }
+        }
+        isMonotonic = isIncreasing;
+    }
+
+    var memoCheckbox = document.getElementById("fMemo");
+    if (memoCheckbox.checked) {
+        // memHalfDiv мемоизированная версия функции halfDiv
+        var memoizedFunc = memoize(tabulateFunction); 
+        let result1 = memoizedFunc(x => tA, tB, tH, tFunc);
+        let result2 = memoizedFunc(x => tA, tB, tH, tFunc);
+    } else {
+        memoizedFunc = null;
+    }
+
+    var debugCheckbox = document.getElementById("fDebug");
+    if (debugCheckbox.checked) {
+        const debugTabulateFunction = debugLog(tabulateFunction);
+    
+        // Вызываем созданную функцию с аргументами
+        debugTabulateFunction(tA, tB, tH, tFunc);
+    }
+
+    var countCallCheckbox = document.getElementById("fCountCall");
+    if (countCallCheckbox.checked) {
+        const countCallTabulateFunction = trackCalls(tabulateFunction);
+    
+        // Вызываем созданную функцию с аргументами
+        countCallTabulateFunction(tA, tB, tH, tFunc);
+    }
+
+
+    
+
+    // Создаем элементы для отображения результатов
+    if (min !== undefined) {
+        let minElement = document.createElement("p");
+        minElement.textContent = `Минимальное значение: ${min}`;
+        resultDiv.appendChild(minElement);
+    }
+    
+    if (positiveCount !== undefined) {
+        let positiveCountElement = document.createElement("p");
+        positiveCountElement.textContent = `Количество положительных значений: ${positiveCount}`;
+        resultDiv.appendChild(positiveCountElement);
+    }
+    
+    if (isMonotonic !== undefined) {
+        let monotonicElement = document.createElement("p");
+        monotonicElement.textContent = `Функция монотонна: ${isMonotonic}`;
+        resultDiv.appendChild(monotonicElement);
+    }
+    createChart(xValues, yValues);
+
 }
+
+function memoize(f) {
+    var cache = {}; // кэш значений 
+    
+    return function() {
+        var key = arguments.length + ":" + [].join.call(arguments, ",");
+        
+        if (key in cache) {
+            let cacheElement = document.createElement("p");
+            cacheElement.textContent = "Результат взят из кэша для аргументов: " + key;
+            document.getElementById("result").appendChild(cacheElement);
+            return cache[key];
+        } else {
+            let result = f.apply(this, arguments);
+            cache[key] = result;
+            let calculationElement = document.createElement("p");
+            calculationElement.textContent = "Расчет выполнен для аргументов: " + key;
+            document.getElementById("result").appendChild(calculationElement);
+            return result;
+        }
+    };
+}
+
+function timing(f)
+	{
+		return function()
+		{
+			var start = (new Date()).getTime();
+			var result = f.apply(this, arguments);
+			var end = (new Date()).getTime();
+			console.log("Время выполнения (мсек): " + (end - start));
+			return result;
+		};
+	}
+
+function debugLog(func) {
+    return function() {
+        const args = Array.from(arguments); // Преобразование аргументов в массив
+        const startTime = performance.now(); // Время начала выполнения функции
+        const result = func.apply(this, args); // Вызов целевой функции с переданными аргументами
+        const endTime = performance.now(); // Время окончания выполнения функции
+        const debugOutput = document.getElementById("result"); // Получаем элемент для вывода отладочной информации
+        debugOutput.innerHTML += `<p>Функция ${func.name}, вызванная с аргументами ${args}, вернула значение ${result}. Время выполнения: ${endTime - startTime} мс.</p>`;
+        console.log(`Функция ${func.name}, вызванная с аргументами ${args}, вернула значение ${result}. Время выполнения: ${endTime - startTime} мс.`);
+        return result; // Возвращаем результат выполнения функции
+    };
+}
+
+function trackCalls(func) {
+    let callCount = 1; 
+
+    function trackedFunc() {
+        callCount++; 
+        return func.apply(this, arguments); 
+    }
+
+    // Метод для получения количества вызовов
+    trackedFunc.getCallCount = function() {
+        return callCount;
+    };
+
+    // Метод для обнуления количества вызовов
+    trackedFunc.resetCallCount = function() {
+        callCount = 0;
+    };
+
+    // Вывод количества вызовов на экран
+    console.log(`Функция ${func.name} была вызвана ${callCount} раз(а)`);
+    let calculationElement = document.createElement("p");
+    calculationElement.textContent = `Функция ${func.name} была вызвана ${callCount} раз(а)`;
+    document.getElementById("result").appendChild(calculationElement);
+
+    return trackedFunc; // Возвращаем обернутую функцию
+}
+
+
+
 
 function displayBooks(books) {
     var resultDiv = document.getElementById("result");
@@ -190,6 +412,14 @@ function init()
 	rez.id = "result";
 	document.body.appendChild(rez);
 	
+    var canvas = document.createElement("canvas"); // Создаем элемент canvas
+    canvas.id = "myChart";
+    canvas.width = 400;
+    canvas.height = 400;
+
+    rez.appendChild(canvas);
+
+
 	document.getElementById("update").hidden = true;
 }
 
@@ -208,8 +438,16 @@ function init()
     <input type="radio" name="tFunc" value="f1">f1 
     <input type="radio" name="tFunc" value="f2">f2 
 	<input type="radio" name="tFunc" value="f3">f3<br>
+    Выберите характеристики функции: <br>
+    <input type="checkbox" id="tMin"> Минимум 
+    <input type="checkbox" id="tPositive"> Количество положительных точек 
+    <input type="checkbox" id="tMonotonic"> Монотонность функции <br>
+    Выберите характеристики функции: <br>
+    <input type="checkbox" id="fMemo"> Мемоизация 
+    <input type="checkbox" id="fDebug"> Отладка 
+    <input type="checkbox" id="fCountCall"> Кол-во вызовов ф-ии в замыкании <br>
 	<input type="button" id="button" value="Сгенерировать" 
-					onclick="checkFunc(form.tA.value, form.tB.value, form.tH.value, form.tFunc.value)">
+					onclick="checkFunc(form.tA.value, form.tB.value, form.tH.value, form.tFunc.value, form.tMin.value, form.tPositive.value, form.tMonotonic.value)">
 	</form>
 
 	<form id = "update">
