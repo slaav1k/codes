@@ -1,0 +1,316 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"> 
+<title>Лаба8</title>
+
+<style>
+
+.filter {
+    display: inline-block;
+    vertical-align: top; 
+    margin-right: 20px; 
+}
+
+
+.action-div {
+    display: inline-block;
+    vertical-align: top; 
+    margin-right: 20px;
+}
+
+
+input {
+	margin-top: 10px;
+}
+
+form, div {
+	margin-top: 20px;
+}
+	
+/* table{
+	border-spacing: 0px;
+} */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.title-column {
+    width: 20%;
+}
+
+.genre-column {
+    width: 15%;
+}
+
+.publicationDate-column {
+    width: 20%;
+}
+
+.author-column {
+    width: 20%;
+}
+
+.copies-column {
+    width: 10%;
+}
+
+.numPages-column {
+    width: 15%;
+}
+
+canvas {
+    max-width: 400px; 
+    max-height: 400px;
+}
+
+</style>
+<script>
+
+
+function isNumeric(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function BaseObject() {
+      this.actions = [];
+    }
+
+    BaseObject.prototype.registerAction = function (action) {
+      this.actions.push(action);
+    };
+
+    BaseObject.prototype.clearActions = function () {
+      this.actions = [];
+    };
+
+    BaseObject.prototype.displayActions = function (outputContainerId) {
+      const outputContainer = document.getElementById(outputContainerId);
+      const actionsList = document.createElement('ul');
+
+      this.actions.forEach(action => {
+        const listItem = document.createElement('li');
+        listItem.textContent = action;
+        actionsList.appendChild(listItem);
+      });
+
+      outputContainer.appendChild(actionsList);
+    };
+
+    function Complex() {
+      BaseObject.call(this);
+      this.r = 0;
+      this.im = 0;
+    }
+
+    Complex.prototype = Object.create(BaseObject.prototype);
+    Complex.prototype.constructor = Complex;
+
+    Complex.prototype.setReal = function (r) {
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        this.r = r;
+        this.registerAction(`Set real part: ${r} to Complex. Time ${timeString}`);
+    };
+
+    Complex.prototype.setImag = function (im) {
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        this.im = im;
+        this.registerAction(`Set image part: ${im} to Complex. Time ${timeString}`);
+    };
+
+    Complex.prototype.getReal = function () {
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        this.registerAction(`Get real part: ${this.r} of Complex. Time ${timeString}`);
+        return this.r;
+    };
+
+    Complex.prototype.getImag = function () {
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        this.registerAction(`Get image part: ${this.im} of Complex. Time ${timeString}`);
+        return this.im;
+    };
+
+    Complex.prototype.add = function (otherComplex) {
+        const resComplex = new Complex();
+        resComplex.setImag(this.getImag() + otherComplex.getImag());
+        resComplex.setReal(this.getReal() + otherComplex.getReal());
+
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        resComplex.registerAction(`Add Complex: ${this} + ${otherComplex}. Time ${timeString}`);
+
+        return resComplex;
+    };
+
+    Complex.prototype.sub = function (otherComplex) {
+        const resComplex = new Complex();
+        resComplex.setImag(this.getImag() - otherComplex.getImag());
+        resComplex.setReal(this.getReal() - otherComplex.getReal());
+
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        resComplex.registerAction(`Sub Complex: ${this} - ${otherComplex}. Time ${timeString}`);
+        
+        return resComplex;
+    };
+
+    Complex.prototype.mul = function (otherComplex) {
+        const a = this.getReal();
+        const b = this.getImag();
+
+        const c = otherComplex.getReal();
+        const d = otherComplex.getImag();
+                
+        const resComplex = new Complex();
+        resComplex.setReal(a * c - b * d);
+        resComplex.setImag(a * d + b * c);
+        
+
+        const currentTime = new Date();
+        const timeString = currentTime.toLocaleTimeString();
+        resComplex.registerAction(`Mul Complex: ${this} * ${otherComplex}. Time ${timeString}`);
+        
+        return resComplex;
+    };
+
+    Complex.prototype.div = function (otherComplex) {
+        const a = this.getReal();
+        const b = this.getImag();
+
+        const c = otherComplex.getReal();
+        const d = otherComplex.getImag();
+                
+        if (c * c + d * d != 0){
+            const resComplex = new Complex();
+            resComplex.setReal((a * c + b * d) / (c * c + d * d));
+            resComplex.setImag((b * c - a * d) / (c * c + d * d))
+            ;
+            
+
+            const currentTime = new Date();
+            const timeString = currentTime.toLocaleTimeString();
+            resComplex.registerAction(`Mul Complex: ${this} / ${otherComplex}. Time ${timeString}`);
+            
+            return resComplex;
+        }
+        else {
+            console.error("Error while div complex. ");
+            return null;
+        }    
+    };
+
+    Complex.prototype.toString = function () {
+        if (this.im >= 0){
+            return `Complex: ${this.r} + ${this.im}i`;
+        }
+        else{
+            return `Complex: ${this.r} - ${-this.im}i`;
+        }         
+    };
+
+    
+function generateExamples() { 
+    const comp1 = new Complex();
+    comp1.setReal(1);
+    comp1.setImag(2);
+
+    const comp2 = new Complex();
+    comp2.setReal(3)
+    comp2.setImag(-4);
+
+    const compSum = comp1.add(comp2);
+    const compSub = comp1.sub(comp2);
+    const compMul = comp1.mul(comp2);
+    const compDiv = comp1.div(comp2);
+
+    document.getElementById('result').innerHTML = `
+        <p>Комплексное число 1: ${comp1}</p>
+        <p>Комплексное число 2: ${comp2}</p>
+        <p>Сумма: ${compSum}</p>
+        <p>Разность: ${compSub}</p>
+        <p>Умножение: ${compMul}</p>
+        <p>Деление: ${compDiv}</p>
+      `;
+
+      comp1.displayActions('result');
+      comp2.displayActions('result');
+      compSum.displayActions('result');
+      compSub.displayActions('result');
+      compMul.displayActions('result');
+      compDiv.displayActions('result');
+}
+
+
+
+function checkFunc(tA, tB, tH, tFunc, tMin, tPositive, tMonotonic) {
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
+}
+
+
+
+
+
+
+function displayBooks(books) {
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
+
+    var table = document.createElement("table");
+    var headerRow = table.insertRow();
+    headerRow.innerHTML = "<th>Title</th><th>Genre</th><th>Publication Date</th><th>Author</th><th>Copies</th><th>Number of Pages</th>"
+     + (hasAgeProperty(books) ? "<th>Age</th>" : ""); 
+
+    for (var i = 0; i < books.length; i++) {
+        var book = books[i];
+        var row = table.insertRow();
+        row.innerHTML = "<td>" + book.title + "</td><td>" + book.genre + "</td><td>" + (book.publicationDate ? book.publicationDate.toDateString() : "")
+             + "</td><td>" + book.author.firstName + " " + book.author.surName + "</td><td>" + book.copies + "</td><td>" + book.numPages + "</td>"
+              + (book.hasOwnProperty("age") ? "<td>" + book.age + "</td>" : ""); 
+    }
+
+    resultDiv.appendChild(table);
+}
+
+
+
+function init()
+{
+	
+	var rez = document.createElement("div");
+	rez.id = "result";
+	document.body.appendChild(rez);
+	document.getElementById("update").hidden = true;
+}
+
+</script>
+</head>
+<body onload = "init()" >
+	<form>
+    <img src="img.png"> <br>
+	<input type="button" id="button" value="Сгенерировать" 
+					onclick="generateExamples()">
+	</form>
+
+	<form id = "update">
+        
+	</form>
+</body>
+</html>

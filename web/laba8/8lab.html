@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polynom Class Example</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    #output {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 80%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="output">
+    <h1>Polynom Class Example</h1>
+    <button onclick="runExample()">Run Example</button>
+    <div id="output-container"></div>
+  </div>
+
+  <script>
+    function BaseObject() {
+      this.actions = [];
+    }
+
+    BaseObject.prototype.registerAction = function (action) {
+      this.actions.push(action);
+    };
+
+    BaseObject.prototype.clearActions = function () {
+      this.actions = [];
+    };
+
+    BaseObject.prototype.displayActions = function (outputContainerId) {
+      const outputContainer = document.getElementById(outputContainerId);
+      const actionsList = document.createElement('ul');
+
+      this.actions.forEach(action => {
+        const listItem = document.createElement('li');
+        listItem.textContent = action;
+        actionsList.appendChild(listItem);
+      });
+
+      outputContainer.appendChild(actionsList);
+    };
+
+    function Polynom(degree) {
+      BaseObject.call(this);
+      this.degree = degree;
+      this.coefficients = Array.from({ length: degree + 1 }, () => 0);
+    }
+
+    Polynom.prototype = Object.create(BaseObject.prototype);
+    Polynom.prototype.constructor = Polynom;
+
+    Polynom.prototype.setCoefficient = function (power, value) {
+      if (power >= 0 && power <= this.degree) {
+        this.coefficients[power] = value;
+        this.registerAction(`Set coefficient x^${power} to ${value}`);
+      } else {
+        console.error("Invalid power");
+      }
+    };
+
+    Polynom.prototype.getCoefficient = function (power) {
+      if (power >= 0 && power <= this.degree) {
+        return this.coefficients[power];
+      } else {
+        console.error("Invalid power");
+        return null;
+      }
+    };
+
+    Polynom.prototype.calculateValue = function (x) {
+      return this.coefficients.reduce((sum, coeff, power) => sum + coeff * Math.pow(x, power), 0);
+    };
+
+    Polynom.prototype.add = function (otherPolynom) {
+      if (otherPolynom.degree === this.degree) {
+        const resultPolynom = new Polynom(this.degree);
+        for (let i = 0; i <= this.degree; i++) {
+          resultPolynom.setCoefficient(i, this.getCoefficient(i) + otherPolynom.getCoefficient(i));
+        }
+        resultPolynom.registerAction(`Add polynoms: ${this} + ${otherPolynom}`);
+        return resultPolynom;
+      } else {
+        console.error("Polynoms must have the same degree for addition");
+        return null;
+      }
+    };
+
+    Polynom.prototype.subtract = function (otherPolynom) {
+      if (otherPolynom.degree === this.degree) {
+        const resultPolynom = new Polynom(this.degree);
+        for (let i = 0; i <= this.degree; i++) {
+          resultPolynom.setCoefficient(i, this.getCoefficient(i) - otherPolynom.getCoefficient(i));
+        }
+        resultPolynom.registerAction(`Subtract polynoms: ${this} - ${otherPolynom}`);
+        return resultPolynom;
+      } else {
+        console.error("Polynoms must have the same degree for subtraction");
+        return null;
+      }
+    };
+
+    Polynom.prototype.multiply = function (otherPolynom) {
+      const resultDegree = this.degree + otherPolynom.degree;
+      const resultPolynom = new Polynom(resultDegree);
+
+      for (let i = 0; i <= this.degree; i++) {
+        for (let j = 0; j <= otherPolynom.degree; j++) {
+          const product = this.getCoefficient(i) * otherPolynom.getCoefficient(j);
+          resultPolynom.setCoefficient(i + j, resultPolynom.getCoefficient(i + j) + product);
+        }
+      }
+
+      resultPolynom.registerAction(`Multiply polynoms: ${this} * ${otherPolynom}`);
+      return resultPolynom;
+    };
+
+    Polynom.prototype.toString = function () {
+      return `Polynom of degree ${this.degree}: [${this.coefficients.join(", ")}]`;
+    };
+
+    function runExample() {
+      const poly1 = new Polynom(2);
+      poly1.setCoefficient(0, 1);
+      poly1.setCoefficient(1, 2);
+      poly1.setCoefficient(2, 3);
+
+      const poly2 = new Polynom(2);
+      poly2.setCoefficient(0, 2);
+      poly2.setCoefficient(1, 1);
+      poly2.setCoefficient(2, -1);
+
+      const sum = poly1.add(poly2);
+      const difference = poly1.subtract(poly2);
+      const product = poly1.multiply(poly2);
+
+      document.getElementById('output-container').innerHTML = `
+        <p>Polynom 1: ${poly1}</p>
+        <p>Polynom 2: ${poly2}</p>
+        <p>Sum: ${sum}</p>
+        <p>Difference: ${difference}</p>
+        <p>Product: ${product}</p>
+      `;
+
+      poly1.displayActions('output-container');
+      poly2.displayActions('output-container');
+      sum.displayActions('output-container');
+      difference.displayActions('output-container');
+      product.displayActions('output-container');
+
+      const poly3 = new Polynom(3);
+      poly3.setCoefficient(0, 1);
+      poly3.setCoefficient(1, 2);
+      poly3.setCoefficient(2, 3);
+      poly3.setCoefficient(3, 3);
+
+      const polyMinus = poly3.subtract(poly2);
+
+      poly3.displayActions('output-container');
+
+      document.getElementById('output-container').innerHTML += `
+    <p>Polynom 3: ${poly3}</p>
+    <p>Subtraction Result: ${polyMinus}</p>
+  `;
+
+
+    }
+  </script>
+</body>
+
+</html>
