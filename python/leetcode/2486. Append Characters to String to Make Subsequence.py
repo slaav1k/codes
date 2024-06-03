@@ -9,4 +9,4 @@ def appendCharacters(s, t):
         
         return 0
 
-print(appendCharacters("coaching","codin"))
+print(appendCharacters("coaching","coding"))
