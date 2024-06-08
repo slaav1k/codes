@@ -124,6 +124,7 @@ function BaseObject() {
         const timeString = currentTime.toLocaleTimeString();
         this.r = r;
         this.registerAction(`Set real part: ${r} to Complex. Time ${timeString}`);
+        console.log(`Set real part: ${r} to Complex. Time ${timeString}`);
     };
 
     Complex.prototype.setImag = function (im) {
