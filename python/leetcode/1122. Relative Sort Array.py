@@ -1,6 +1,6 @@
 
 def relativeSortArray(arr1, arr2):
-    # efwwfew
+    # efwwfe
     a = 0
     for i in range(len(arr2)):
         for j in range(len(arr1)):
